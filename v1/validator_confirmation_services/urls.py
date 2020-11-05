@@ -1,10 +1,6 @@
-from django.urls import path
+from rest_framework.routers import SimpleRouter
 
-from .views.validator_confirmation_service import ValidatorConfirmationServiceView
+from .views.validator_confirmation_service import ValidatorConfirmationServiceViewSet
 
-urlpatterns = [
-
-    # Validator confirmation services
-    path('validator_confirmation_services', ValidatorConfirmationServiceView.as_view()),
-
-]
+router = SimpleRouter(trailing_slash=False)
+router.register('validator_confirmation_services', ValidatorConfirmationServiceViewSet)

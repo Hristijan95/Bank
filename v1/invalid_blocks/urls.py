@@ -1,10 +1,6 @@
-from django.urls import path
+from rest_framework.routers import SimpleRouter
 
-from .views.invalid_block import InvalidBlockView
+from .views.invalid_block import InvalidBlockViewSet
 
-urlpatterns = [
-
-    # Invalid blocks
-    path('invalid_blocks', InvalidBlockView.as_view()),
-
-]
+router = SimpleRouter(trailing_slash=False)
+router.register('invalid_blocks', InvalidBlockViewSet)

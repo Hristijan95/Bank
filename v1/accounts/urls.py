@@ -1,10 +1,6 @@
-from django.urls import path
+from rest_framework.routers import SimpleRouter
 
-from .views.account import AccountView
+from .views.account import AccountViewSet
 
-urlpatterns = [
-
-    # Accounts
-    path('accounts', AccountView.as_view()),
-
-]
+router = SimpleRouter(trailing_slash=False)
+router.register('accounts', AccountViewSet)

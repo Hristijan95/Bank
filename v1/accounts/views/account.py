@@ -1,18 +1,45 @@
+from rest_framework.mixins import ListModelMixin, UpdateModelMixin
 from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework.viewsets import GenericViewSet
 
+from v1.decorators.nodes import is_self_signed_message
 from ..models.account import Account
-from ..serializers.account import AccountSerializer
+from ..serializers.account import AccountSerializer, AccountSerializerUpdate
 
 
-# accounts
-class AccountView(APIView):
+class AccountViewSet(
+    ListModelMixin,
+    UpdateModelMixin,
+    GenericViewSet,
+):
+    """
+    Accounts
+    ---
+    list:
+      description: List accounts
+    update:
+      description: Update account
+      parameters:
+        - name: trust
+          type: number
+    """
 
-    @staticmethod
-    def get(request):
-        """
-        description: List accounts
-        """
+    lookup_field = 'account_number'
+    ordering_fields = '__all__'
+    queryset = Account.objects.all()
+    serializer_class = AccountSerializer
+    serializer_update_class = AccountSerializerUpdate
 
-        accounts = Account.objects.all()
-        return Response(AccountSerializer(accounts, many=True).data)
+    @is_self_signed_message
+    def update(self, request, *args, **kwargs):
+
+        serializer = self.serializer_update_class(
+            self.get_object(),
+            data=request.data['message'],
+            partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+
+        return Response(
+            self.get_serializer(serializer.save()).data
+        )
